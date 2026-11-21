@@ -17,7 +17,8 @@ const crypto = require('crypto');
 
 const PIXEL_ID = (process.env.META_PIXEL_ID || '1084066284668146').trim();
 const API_VERSION = (process.env.META_API_VERSION || 'v24.0').trim();
-const ALLOWED_EVENTS = new Set(['PageView', 'ViewContent', 'FormStart', 'Lead', 'Contact']);
+const ALLOWED_EVENTS = new Set(['PageView', 'ViewContent', 'FormStart', 'Purchase', 'Contact']);
+const ALLOWED_CONTENT_IDS = new Set(['writing', 'datascience', 'spss', 'all']);
 
 const sha256 = (value) => crypto.createHash('sha256').update(value, 'utf8').digest('hex');
 const text = (value, max = 300) => (typeof value === 'string' ? value.trim().slice(0, max) : '');
@@ -102,6 +103,14 @@ function buildEvent(req, input) {
   const customData = {};
   if (text(rawCustom.content_name)) customData.content_name = text(rawCustom.content_name);
   if (text(rawCustom.content_category)) customData.content_category = text(rawCustom.content_category);
+  if (Array.isArray(rawCustom.content_ids)) {
+    const ids = rawCustom.content_ids.map((id) => text(id, 20)).filter((id) => ALLOWED_CONTENT_IDS.has(id));
+    if (ids.length) {
+      customData.content_ids = ids;
+      customData.content_type = 'product';
+      customData.num_items = ids.length;
+    }
+  }
   const value = Number(rawCustom.value);
   if (isFinite(value) && value > 0 && value < 10000000) {
     customData.value = value;

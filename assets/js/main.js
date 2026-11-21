@@ -92,10 +92,6 @@
     });
   }
 
-  /* ---------- الإعدادات: موعد SPSS ---------- */
-  if (hasValue(CFG.spssDate)) {
-    $$('[data-spss-date]').forEach(function (el) { el.textContent = String(CFG.spssDate).trim(); });
-  }
 
   /* ---------- الإعدادات: الأسعار ---------- */
   var PRICES = CFG.prices || {};
@@ -106,7 +102,8 @@
   function formatPrice(v) {
     var n = priceNumber(v);
     if (!n) { return String(v); }
-    return n.toLocaleString('en-US').replace(/,/g, ' ') + ' دج';
+    // الفاصلة (18,000) تُبقي الرقم كتلة واحدة؛ المسافة (18 000) تجعله يظهر معكوسًا في النص العربي
+    return n.toLocaleString('en-US') + ' دج';
   }
   $$('[data-price]').forEach(function (el) {
     var v = PRICES[el.getAttribute('data-price')];
@@ -629,11 +626,20 @@
     var phoneVal = normalizePhone(fields.phone.value);
     var courses = coursesHidden.value;
 
-    var params = { content_name: courses, content_category: FORM_LABEL };
+    // حدث Purchase (هدف حملات المبيعات): القيمة = رسوم الدورات المختارة بالدينار
     var value = leadValue();
-    if (value > 0) { params.value = value; params.currency = 'DZD'; }
+    var keys = (allBox && allBox.checked) ? ['all'] : selectedKeys();
+    var params = {
+      content_name: courses,
+      content_category: FORM_LABEL,
+      content_type: 'product',
+      content_ids: keys,
+      num_items: keys.length,
+      value: value,
+      currency: 'DZD'
+    };
     // بيانات المطابقة تُرسل إلى خادمنا فقط، ويشفّرها (SHA-256) قبل إرسالها إلى ميتا
-    track('Lead', params, {
+    track('Purchase', params, {
       userData: { full_name: name, ph: phoneVal, em: (fields.email.value || '').trim() }
     });
 
