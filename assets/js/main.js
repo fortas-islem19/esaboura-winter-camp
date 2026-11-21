@@ -116,6 +116,19 @@
       el.hidden = false;
     }
   });
+  // باقة المخيم كاملاً: السعر الأصلي (مجموع الدورات) ومقدار التوفير
+  (function bundleSavings() {
+    var bundle = priceNumber(PRICES.all || 0);
+    var sum = priceNumber(PRICES.writing || 0) + priceNumber(PRICES.datascience || 0) + priceNumber(PRICES.spss || 0);
+    if (!bundle || sum <= bundle) { return; }
+    var was = $('[data-price-was]');
+    var save = $('[data-price-save]');
+    if (was) { was.textContent = formatPrice(sum); was.hidden = false; }
+    if (save) { save.textContent = 'وفّر ' + formatPrice(sum - bundle); save.hidden = false; }
+    var inline = $('[data-price-inline="all"]');
+    if (inline) { inline.setAttribute('data-price-suffix', ' · وفّر ' + formatPrice(sum - bundle)); }
+  })();
+
   // السعر بجانب كل خيار في الاستمارة
   $$('[data-price-inline]').forEach(function (el) {
     var v = PRICES[el.getAttribute('data-price-inline')];
@@ -183,6 +196,48 @@
   document.addEventListener('click', function (e) {
     var a = e.target.closest && e.target.closest('[data-contact="phone"], [data-contact="whatsapp"], [data-contact="whatsapp-float"], [data-success-wa]');
     if (a) { track('Contact', { content_name: FORM_LABEL }); }
+  });
+
+  /* ---------- معلومات الدفع ---------- */
+  var PAY = CFG.payment || {};
+  if (hasValue(PAY.ccp) || hasValue(PAY.rib)) {
+    $$('[data-pay]').forEach(function (el) {
+      var v = PAY[el.getAttribute('data-pay')];
+      if (hasValue(v)) { el.textContent = String(v).trim(); } else { el.closest('div').hidden = true; }
+    });
+  } else {
+    $$('[data-pay-block], .pay-details').forEach(function (el) { el.hidden = true; });
+  }
+
+  function copyText(text) {
+    if (navigator.clipboard && window.isSecureContext) { return navigator.clipboard.writeText(text); }
+    return new Promise(function (resolve, reject) {
+      var ta = document.createElement('textarea');
+      ta.value = text;
+      ta.setAttribute('readonly', '');
+      ta.style.cssText = 'position:fixed;opacity:0;top:0;left:0';
+      document.body.appendChild(ta);
+      ta.select();
+      var ok = false;
+      try { ok = document.execCommand('copy'); } catch (e) { ok = false; }
+      document.body.removeChild(ta);
+      if (ok) { resolve(); } else { reject(new Error('copy failed')); }
+    });
+  }
+  document.addEventListener('click', function (e) {
+    var btn = e.target.closest && e.target.closest('[data-copy-from]');
+    if (!btn) { return; }
+    var value = String(PAY[btn.getAttribute('data-copy-from')] || '').trim();
+    if (!value) { return; }
+    var label = $('span', btn);
+    copyText(value).then(function () {
+      btn.classList.add('is-copied');
+      if (label) { label.textContent = 'تم النسخ'; }
+      setTimeout(function () {
+        btn.classList.toggle('is-copied', false);
+        if (label) { label.textContent = 'نسخ'; }
+      }, 1800);
+    }).catch(function () { /* المستخدم يستطيع النسخ يدويًا */ });
   });
 
   /* ---------- السنة في التذييل ---------- */
@@ -553,6 +608,8 @@
     fd.set('courses', coursesHidden.value);
     fd.set('phone', normalizePhone(fields.phone.value));
     fd.set('full_name', fields.name.value.trim());
+    var due = leadValue();
+    fd.set('amount_due', due > 0 ? formatPrice(due) : '');
     return fd;
   }
 
@@ -581,16 +638,21 @@
     });
 
     $('[data-success-name]', successBox).textContent = name.split(/\s+/)[0] || name;
-    $('[data-success-phone]', successBox).textContent = phoneVal;
     $('[data-success-courses]', successBox).textContent = courses ? 'الدورات المختارة: ' + courses.split(' + ').join('، ') : '';
+    var amountRow = $('[data-success-amount-row]', successBox);
+    if (amountRow) {
+      $('[data-success-amount]', successBox).textContent = value > 0 ? formatPrice(value) : '';
+      amountRow.hidden = !(value > 0);
+    }
 
     var waBtn = $('[data-success-wa]', successBox);
     if (wa && waBtn) {
       waBtn.href = waLink(
-        'السلام عليكم، سجّلت للتوّ في ' + FORM_LABEL + ' بمدرسة السبورة سطيف.\n' +
+        'السلام عليكم، سجّلت في ' + FORM_LABEL + ' بمدرسة السبورة سطيف، وهذه صورة وصل الدفع.\n' +
         'الاسم: ' + name + '\n' +
         'الهاتف: ' + phoneVal + '\n' +
-        'الدورات: ' + courses.split(' + ').join('، ')
+        'الدورات: ' + courses.split(' + ').join('، ') +
+        (value > 0 ? '\nالمبلغ: ' + formatPrice(value) : '')
       );
       waBtn.hidden = false;
     }
