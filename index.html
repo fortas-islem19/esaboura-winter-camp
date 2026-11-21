@@ -98,6 +98,7 @@
   <symbol id="i-instagram" viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="17" height="17" rx="5"/><circle cx="12" cy="12" r="4"/><path d="M17.3 6.7h.01"/></symbol>
   <symbol id="i-snow" viewBox="0 0 24 24"><path d="M12 2v20M3.3 7l17.4 10M3.3 17L20.7 7"/><path d="M9.5 3.5L12 6l2.5-2.5M9.5 20.5L12 18l2.5 2.5"/></symbol>
   <symbol id="i-chevron" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></symbol>
+  <symbol id="i-copy" viewBox="0 0 24 24"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V5.5A1.5 1.5 0 0 0 14.5 4h-9A1.5 1.5 0 0 0 4 5.5v9A1.5 1.5 0 0 0 5.5 16H8"/></symbol>
   <symbol id="i-lock" viewBox="0 0 24 24"><rect x="5" y="10.5" width="14" height="10" rx="2"/><path d="M8 10.5V8a4 4 0 0 1 8 0v2.5"/></symbol>
   <symbol id="i-layers" viewBox="0 0 24 24"><path d="M12 3l9 5-9 5-9-5 9-5z"/><path d="M3 13l9 5 9-5"/></symbol>
 </svg>
@@ -375,7 +376,7 @@
         <div class="bundle-text">
           <h3>تريد الاستفادة القصوى؟</h3>
           <p>سجّل في المخيم كاملاً وتابع الدورات الثلاث: من كتابة المقال ونشره، إلى تحليل بياناته بـ SPSS و Python.</p>
-          <p class="course-price" data-price="all" hidden><span>رسوم المخيم كاملاً</span><b data-price-value></b></p>
+          <p class="course-price" data-price="all" hidden><span>رسوم المخيم كاملاً</span><b data-price-value></b><s class="price-was" data-price-was hidden></s><span class="price-note" data-price-save hidden></span></p>
         </div>
         <a class="btn btn-dark" href="#register" data-select-course="all" data-cta="bundle">سجّل في المخيم كاملاً</a>
       </div>
@@ -503,9 +504,33 @@
         <p class="register-lead">املأ الاستمارة في أقل من دقيقة. عدد المقاعد في كل دورة محدود، والأولوية لمن يسجّل أولاً.</p>
         <ol class="steps">
           <li><b>1</b><div><strong>املأ الاستمارة</strong><span>اختر الدورة أو الدورات التي تهمّك.</span></div></li>
-          <li><b>2</b><div><strong>نتصل بك للتأكيد</strong><span>يتواصل معك فريق مدرسة السبورة لتأكيد مقعدك وإعلامك بالرسوم وطريقة الدفع.</span></div></li>
-          <li><b>3</b><div><strong>احضر بحاسوبك</strong><span>موعدنا في مدرسة السبورة بسطيف في اليوم الأول من دورتك.</span></div></li>
+          <li><b>2</b><div><strong>ادفع الرسوم</strong><span>عبر الحساب البريدي (CCP) أو تطبيق بريدي موب، وتظهر لك معلومات الدفع فور التسجيل.</span></div></li>
+          <li><b>3</b><div><strong>أرسل صورة الوصل</strong><span>عبر واتساب، ويُؤكَّد مقعدك بعد التحقق.</span></div></li>
+          <li><b>4</b><div><strong>احضر بحاسوبك</strong><span>موعدنا في مدرسة السبورة بسطيف في اليوم الأول من دورتك.</span></div></li>
         </ol>
+        <details class="pay-details">
+          <summary><span><svg class="i" aria-hidden="true"><use href="#i-file"/></svg> معلومات الدفع</span><svg class="i chev" aria-hidden="true"><use href="#i-chevron"/></svg></summary>
+          <div class="pay-details-body">
+          <p>سجّل أولاً عبر الاستمارة، ثم ادفع بإحدى الطريقتين:</p>
+          <div class="pay" data-pay-block>
+            <div class="pay-method">
+              <div class="pay-head"><span class="pay-ico"><svg class="i" aria-hidden="true"><use href="#i-mail"/></svg></span><div><strong>الحساب البريدي الجاري (CCP)</strong><small>إيداع في أي مكتب بريد</small></div></div>
+              <dl class="pay-rows">
+                <div><dt>رقم الحساب</dt><dd><bdi dir="ltr" data-pay="ccp"></bdi><button type="button" class="copy" data-copy-from="ccp" aria-label="نسخ رقم الحساب"><svg class="i" aria-hidden="true"><use href="#i-copy"/></svg><span>نسخ</span></button></dd></div>
+                <div><dt>المفتاح (Clé)</dt><dd><bdi dir="ltr" data-pay="ccpKey"></bdi></dd></div>
+                <div><dt>صاحب الحساب</dt><dd><bdi dir="ltr" data-pay="holder"></bdi></dd></div>
+              </dl>
+            </div>
+            <div class="pay-method">
+              <div class="pay-head"><span class="pay-ico"><svg class="i" aria-hidden="true"><use href="#i-phone"/></svg></span><div><strong>تطبيق بريدي موب (BaridiMob)</strong><small>تحويل من هاتفك</small></div></div>
+              <dl class="pay-rows">
+                <div><dt>RIB</dt><dd><bdi dir="ltr" data-pay="rib"></bdi><button type="button" class="copy" data-copy-from="rib" aria-label="نسخ RIB"><svg class="i" aria-hidden="true"><use href="#i-copy"/></svg><span>نسخ</span></button></dd></div>
+              </dl>
+            </div>
+            <p class="pay-note"><svg class="i" aria-hidden="true"><use href="#i-file"/></svg> لا تنسَ تصوير الوصل وإرساله لنا للتحقق.</p>
+          </div>
+          </div>
+        </details>
         <div class="contact-mini" data-contact-group>
           <p>لديك سؤال قبل التسجيل؟</p>
           <div class="contact-links">
@@ -622,6 +647,7 @@
           <input type="hidden" name="utm_content" value="">
           <input type="hidden" name="utm_term" value="">
           <input type="hidden" name="fbclid" value="">
+          <input type="hidden" name="amount_due" value="">
 
           <button type="submit" class="btn btn-accent btn-lg btn-block btn-submit">
             <span class="btn-label">أرسل طلب التسجيل</span>
@@ -634,10 +660,30 @@
         <div class="form-success" id="form-success" hidden tabindex="-1">
           <div class="success-icon"><svg class="i" aria-hidden="true"><use href="#i-check"/></svg></div>
           <h3>تم استلام طلبك بنجاح!</h3>
-          <p>شكرًا <b data-success-name></b>. سيتواصل معك فريق مدرسة السبورة قريبًا على الرقم <bdi dir="ltr" data-success-phone></bdi> لتأكيد مقعدك وإعلامك بتفاصيل الدفع.</p>
-          <p class="success-courses" data-success-courses></p>
+          <p>السلام عليكم ورحمة الله، مرحبًا بك <b data-success-name></b> في مخيم المهارات 03. لإتمام تسجيلك وتأكيد مقعدك، ادفع الرسوم بإحدى الطريقتين التاليتين ثم أرسل لنا صورة الوصل.</p>
+          <div class="success-summary">
+            <p data-success-courses></p>
+            <p class="success-amount" data-success-amount-row hidden>المبلغ المطلوب: <b data-success-amount></b></p>
+          </div>
+          <div class="pay" data-pay-block>
+            <div class="pay-method">
+              <div class="pay-head"><span class="pay-ico"><svg class="i" aria-hidden="true"><use href="#i-mail"/></svg></span><div><strong>الحساب البريدي الجاري (CCP)</strong><small>إيداع في أي مكتب بريد</small></div></div>
+              <dl class="pay-rows">
+                <div><dt>رقم الحساب</dt><dd><bdi dir="ltr" data-pay="ccp"></bdi><button type="button" class="copy" data-copy-from="ccp" aria-label="نسخ رقم الحساب"><svg class="i" aria-hidden="true"><use href="#i-copy"/></svg><span>نسخ</span></button></dd></div>
+                <div><dt>المفتاح (Clé)</dt><dd><bdi dir="ltr" data-pay="ccpKey"></bdi></dd></div>
+                <div><dt>صاحب الحساب</dt><dd><bdi dir="ltr" data-pay="holder"></bdi></dd></div>
+              </dl>
+            </div>
+            <div class="pay-method">
+              <div class="pay-head"><span class="pay-ico"><svg class="i" aria-hidden="true"><use href="#i-phone"/></svg></span><div><strong>تطبيق بريدي موب (BaridiMob)</strong><small>تحويل من هاتفك</small></div></div>
+              <dl class="pay-rows">
+                <div><dt>RIB</dt><dd><bdi dir="ltr" data-pay="rib"></bdi><button type="button" class="copy" data-copy-from="rib" aria-label="نسخ RIB"><svg class="i" aria-hidden="true"><use href="#i-copy"/></svg><span>نسخ</span></button></dd></div>
+              </dl>
+            </div>
+            <p class="pay-note"><svg class="i" aria-hidden="true"><use href="#i-file"/></svg> لا تنسَ تصوير الوصل وإرساله لنا للتحقق.</p>
+          </div>
           <div class="success-actions">
-            <a class="btn btn-whatsapp" data-success-wa hidden target="_blank" rel="noopener"><svg class="i" aria-hidden="true"><use href="#i-whatsapp"/></svg> أكّد تسجيلك عبر واتساب</a>
+            <a class="btn btn-whatsapp" data-success-wa hidden target="_blank" rel="noopener"><svg class="i" aria-hidden="true"><use href="#i-whatsapp"/></svg> أرسل صورة الوصل عبر واتساب</a>
             <button type="button" class="btn btn-outline" data-new-registration>تسجيل شخص آخر</button>
           </div>
         </div>
@@ -671,7 +717,7 @@
         </details>
         <details>
           <summary>كيف يتم تأكيد التسجيل والدفع؟<svg class="i" aria-hidden="true"><use href="#i-chevron"/></svg></summary>
-          <div class="faq-a"><p>بعد إرسال الاستمارة يتواصل معك فريق مدرسة السبورة هاتفيًا لتأكيد مقعدك وإعلامك بالرسوم وطريقة الدفع. يُعتبر المقعد محجوزًا بعد هذا التأكيد.</p></div>
+          <div class="faq-a"><p>بعد إرسال الاستمارة تظهر لك معلومات الدفع والمبلغ المطلوب. ادفع عبر الحساب البريدي (CCP) أو تطبيق بريدي موب، ثم أرسل صورة الوصل عبر واتساب. يُعتبر المقعد محجوزًا بعد التحقق من الدفع.</p></div>
         </details>
         <details>
           <summary>متى تنطلق دورة SPSS؟<svg class="i" aria-hidden="true"><use href="#i-chevron"/></svg></summary>
