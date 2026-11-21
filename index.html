@@ -53,7 +53,20 @@
   <noscript><img height="1" width="1" style="display:none" alt="" src="https://www.facebook.com/tr?id=1084066284668146&ev=PageView&noscript=1"></noscript>
   <!-- End Meta Pixel Code -->
 
-  <script>document.documentElement.classList.add('js');</script>
+  <script>
+    // يبدأ تشغيل حركات الواجهة بعد تحميل الخطوط (أو بعد 1.2 ثانية كحدّ أقصى)
+    (function (d) {
+      d.classList.add('js');
+      var started = false;
+      function go() { if (!started) { started = true; d.classList.add('hero-ready'); } }
+      setTimeout(go, 1200);
+      document.addEventListener('DOMContentLoaded', function () {
+        if (document.fonts && document.fonts.ready) {
+          requestAnimationFrame(function () { document.fonts.ready.then(function () { requestAnimationFrame(go); }); });
+        } else { go(); }
+      });
+    })(document.documentElement);
+  </script>
   <script src="assets/js/main.js" defer></script>
 </head>
 <body>
@@ -141,7 +154,7 @@
           <li><svg class="i" aria-hidden="true"><use href="#i-users"/></svg> تكوين حضوري، مقاعد محدودة</li>
         </ul>
         <div class="hero-actions">
-          <a class="btn btn-accent btn-lg" href="#register" data-cta="hero">احجز مقعدك الآن <svg class="i" aria-hidden="true"><use href="#i-arrow"/></svg></a>
+          <a class="btn btn-accent btn-lg btn-shine" href="#register" data-cta="hero">احجز مقعدك الآن <svg class="i" aria-hidden="true"><use href="#i-arrow"/></svg></a>
           <a class="btn btn-ghost btn-lg" href="#program">تصفّح البرنامج</a>
         </div>
 
@@ -194,10 +207,10 @@
   <!-- ===== أرقام ===== -->
   <section class="stats" aria-label="المخيم في أرقام">
     <div class="container stats-grid">
-      <div class="stat"><strong>3</strong><span>دورات تطبيقية مستقلة</span></div>
-      <div class="stat"><strong>4</strong><span>أساتذة وباحثين مؤطّرين</span></div>
-      <div class="stat"><strong><bdi dir="ltr">+8</bdi></strong><span>أيام من التكوين الحضوري</span></div>
-      <div class="stat"><strong dir="ltr">03</strong><span>الطبعة الثالثة من المخيم</span></div>
+      <div class="stat"><strong data-count="3">3</strong><span>دورات تطبيقية مستقلة</span></div>
+      <div class="stat"><strong data-count="4">4</strong><span>أساتذة وباحثين مؤطّرين</span></div>
+      <div class="stat"><strong><bdi dir="ltr" data-count="8" data-prefix="+">+8</bdi></strong><span>أيام من التكوين الحضوري</span></div>
+      <div class="stat"><strong dir="ltr" data-count="3" data-pad="2">03</strong><span>الطبعة الثالثة من المخيم</span></div>
     </div>
   </section>
 
