@@ -116,6 +116,14 @@
       el.hidden = false;
     }
   });
+  // السعر بجانب كل خيار في الاستمارة
+  $$('[data-price-inline]').forEach(function (el) {
+    var v = PRICES[el.getAttribute('data-price-inline')];
+    if (hasValue(v)) {
+      el.textContent = formatPrice(v) + (el.getAttribute('data-price-suffix') || '');
+      el.hidden = false;
+    }
+  });
 
   /* ---------- الإعدادات: التواصل ---------- */
   var phone = hasValue(CONTACT.phone) ? String(CONTACT.phone).trim() : '';
@@ -326,6 +334,7 @@
     var bar = $('[data-sticky-cta]');
     if (!bar || !('IntersectionObserver' in window)) { return; }
     var link = $('a', bar);
+    var waFloat = $('.wa-float');
     var hidden = { hero: true, register: false, footer: false };
     var targets = { hero: $('.hero'), register: $('#register'), footer: $('.site-footer') };
     function update() {
@@ -333,6 +342,8 @@
       bar.classList.toggle('is-visible', show);
       bar.setAttribute('aria-hidden', show ? 'false' : 'true');
       if (link) { link.tabIndex = show ? 0 : -1; }
+      // قسم التسجيل فيه زر واتساب خاص به، فنُخفي الزر العائم كي لا يغطّي حقول الاستمارة
+      if (waFloat) { waFloat.classList.toggle('is-tucked', hidden.register); }
     }
     var io = new IntersectionObserver(function (entries) {
       entries.forEach(function (entry) {
