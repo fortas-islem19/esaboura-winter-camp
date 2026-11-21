@@ -1,0 +1,5 @@
+# أسرار ومتغيّرات البيئة — لا تُرفع إلى GitHub أبدًا
+.env
+.env.*
+.vercel
+node_modules
