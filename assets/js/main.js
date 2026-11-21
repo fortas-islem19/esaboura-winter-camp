@@ -14,6 +14,7 @@
   function $(sel, root) { return (root || document).querySelector(sel); }
   function $$(sel, root) { return Array.prototype.slice.call((root || document).querySelectorAll(sel)); }
   function hasValue(v) { return v !== undefined && v !== null && String(v).trim() !== ''; }
+  var REDUCE_MOTION = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
 
   /* ---------- Meta Pixel + Conversions API ----------
      كل حدث يُرسل مرتين بنفس event_id: من المتصفح (البيكسل) ومن الخادم (/api/capi)،
@@ -200,6 +201,15 @@
       seconds: $('[data-cd="seconds"]', box)
     };
     function pad(n) { return (n < 10 ? '0' : '') + n; }
+    var first = true;
+    function setPart(el, value) {
+      if (el.textContent === value) { return; }
+      el.textContent = value;
+      if (first || REDUCE_MOTION) { return; }
+      el.classList.toggle('cd-tick', false);
+      void el.offsetWidth; // إعادة تشغيل الحركة
+      el.classList.toggle('cd-tick', true);
+    }
     var timer;
     function tick() {
       var diff = target - Date.now();
@@ -209,13 +219,79 @@
         return;
       }
       var s = Math.floor(diff / 1000);
-      parts.days.textContent = String(Math.floor(s / 86400));
-      parts.hours.textContent = pad(Math.floor((s % 86400) / 3600));
-      parts.minutes.textContent = pad(Math.floor((s % 3600) / 60));
-      parts.seconds.textContent = pad(s % 60);
+      setPart(parts.days, String(Math.floor(s / 86400)));
+      setPart(parts.hours, pad(Math.floor((s % 86400) / 3600)));
+      setPart(parts.minutes, pad(Math.floor((s % 3600) / 60)));
+      setPart(parts.seconds, pad(s % 60));
     }
     tick();
+    first = false;
     timer = setInterval(tick, 1000);
+  })();
+
+  /* ---------- ثلج خفيف في الواجهة (مخيم شتوي) ---------- */
+  (function snow() {
+    var hero = $('.hero');
+    if (!hero || REDUCE_MOTION) { return; }
+    var box = document.createElement('div');
+    box.className = 'snow';
+    box.setAttribute('aria-hidden', 'true');
+    var count = window.innerWidth < 640 ? 12 : 24;
+    for (var i = 0; i < count; i++) {
+      var f = document.createElement('span');
+      f.className = 'flake';
+      var size = 2 + Math.random() * 4;
+      f.style.cssText =
+        '--x:' + (Math.random() * 100).toFixed(1) + '%;' +
+        '--s:' + size.toFixed(1) + 'px;' +
+        '--o:' + (0.25 + Math.random() * 0.45).toFixed(2) + ';' +
+        '--b:' + (size > 4.5 ? 1.2 : 0) + 'px;' +
+        '--t:' + (9 + Math.random() * 9).toFixed(1) + 's;' +
+        '--delay:' + (Math.random() * 9).toFixed(1) + 's;' +
+        '--sway:' + (Math.random() * 60 - 30).toFixed(0) + 'px;';
+      box.appendChild(f);
+    }
+    hero.insertBefore(box, hero.firstChild);
+
+    // إيقاف الحركات المستمرّة حين تخرج الواجهة من الشاشة
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver(function (entries) {
+        hero.classList.toggle('is-offscreen', !entries[0].isIntersecting);
+      }).observe(hero);
+    }
+  })();
+
+  /* ---------- عدّاد الأرقام في شريط الإحصائيات ---------- */
+  (function countUp() {
+    var els = $$('[data-count]');
+    if (!els.length || REDUCE_MOTION || !('IntersectionObserver' in window)) { return; }
+    function format(el, n) {
+      var width = parseInt(el.getAttribute('data-pad') || '0', 10);
+      var txt = String(n);
+      while (txt.length < width) { txt = '0' + txt; }
+      return (el.getAttribute('data-prefix') || '') + txt;
+    }
+    function run(el, delay) {
+      var target = parseInt(el.getAttribute('data-count'), 10) || 0;
+      var start = null;
+      var duration = 1100;
+      setTimeout(function () {
+        requestAnimationFrame(function step(ts) {
+          if (start === null) { start = ts; }
+          var t = Math.min(1, (ts - start) / duration);
+          var eased = 1 - Math.pow(1 - t, 3);
+          el.textContent = format(el, Math.round(target * eased));
+          if (t < 1) { requestAnimationFrame(step); }
+        });
+      }, delay);
+    }
+    els.forEach(function (el) { el.textContent = format(el, 0); });
+    var io = new IntersectionObserver(function (entries) {
+      if (!entries[0].isIntersecting) { return; }
+      io.disconnect();
+      els.forEach(function (el, i) { run(el, i * 140); });
+    }, { threshold: 0.4 });
+    io.observe(els[0].closest('.stats') || els[0]);
   })();
 
   /* ---------- الظهور التدريجي + أحداث المشاهدة ---------- */
