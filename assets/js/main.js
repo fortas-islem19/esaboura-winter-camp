@@ -15,13 +15,80 @@
   function $$(sel, root) { return Array.prototype.slice.call((root || document).querySelectorAll(sel)); }
   function hasValue(v) { return v !== undefined && v !== null && String(v).trim() !== ''; }
 
-  /* ---------- Meta Pixel ---------- */
-  function track(event, params, custom) {
+  /* ---------- Meta Pixel + Conversions API ----------
+     كل حدث يُرسل مرتين بنفس event_id: من المتصفح (البيكسل) ومن الخادم (/api/capi)،
+     فتعتبرهما ميتا حدثًا واحدًا وتحتفظ بالأكمل. */
+  var PIXEL_ON = /^\d{6,20}$/.test(String(CFG.metaPixelId || ''));
+  var CAPI_URL = PIXEL_ON && hasValue(CFG.capiEndpoint) ? String(CFG.capiEndpoint).trim() : '';
+
+  function newEventId(name) {
+    return String(name).toLowerCase() + '.' + Date.now().toString(36) + '.' + Math.random().toString(36).slice(2, 10);
+  }
+  function getCookie(name) {
+    var m = document.cookie.match(new RegExp('(?:^|; )' + name + '=([^;]*)'));
+    return m ? decodeURIComponent(m[1]) : '';
+  }
+  function storageGet(store, key) { try { return window[store].getItem(key) || ''; } catch (e) { return ''; } }
+  function storageSet(store, key, value) { try { window[store].setItem(key, value); } catch (e) { /* لا شيء */ } }
+
+  // معرّف زائر ثابت (يُشفَّر في الخادم) لربط أحداث الزائر نفسه
+  function visitorId() {
+    var id = storageGet('localStorage', 'sk03_vid');
+    if (!id) {
+      id = 'v.' + Date.now().toString(36) + '.' + Math.random().toString(36).slice(2, 12);
+      storageSet('localStorage', 'sk03_vid', id);
+    }
+    return id;
+  }
+  // معرّف النقرة على الإعلان: من ملف تعريف البيكسل، أو يُبنى من fbclid في الرابط
+  function clickId() {
+    var fbc = getCookie('_fbc') || storageGet('localStorage', 'sk03_fbc');
+    if (fbc) { return fbc; }
+    var fbclid = '';
+    try { fbclid = new URLSearchParams(window.location.search).get('fbclid') || ''; } catch (e) { /* لا شيء */ }
+    if (!fbclid) { return ''; }
+    fbc = 'fb.1.' + Date.now() + '.' + fbclid;
+    storageSet('localStorage', 'sk03_fbc', fbc);
+    return fbc;
+  }
+
+  function sendCapi(eventName, eventId, customData, userData) {
+    if (!CAPI_URL) { return; }
+    var user = { fbp: getCookie('_fbp'), fbc: clickId(), external_id: visitorId() };
+    Object.keys(userData || {}).forEach(function (k) { user[k] = userData[k]; });
+    var body = JSON.stringify({
+      event_name: eventName,
+      event_id: eventId,
+      event_source_url: window.location.href.split('#')[0],
+      custom_data: customData || {},
+      user_data: user
+    });
+    try {
+      if (navigator.sendBeacon && navigator.sendBeacon(CAPI_URL, new Blob([body], { type: 'application/json' }))) { return; }
+    } catch (e) { /* ننتقل إلى fetch */ }
+    try {
+      fetch(CAPI_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: body, keepalive: true })
+        .catch(function () { /* لا شيء */ });
+    } catch (e) { /* لا شيء */ }
+  }
+
+  function track(event, params, opts) {
+    opts = opts || {};
+    if (!PIXEL_ON) { return; }
+    var eventId = opts.eventId || newEventId(event);
     try {
       if (typeof window.fbq === 'function') {
-        window.fbq(custom ? 'trackCustom' : 'track', event, params || {});
+        window.fbq(opts.custom ? 'trackCustom' : 'track', event, params || {}, { eventID: eventId });
       }
     } catch (e) { /* لا شيء */ }
+    sendCapi(event, eventId, params, opts.userData);
+  }
+
+  // PageView من الخادم بنفس معرّف البيكسل (بعد التحميل ليكون ملف _fbp جاهزًا)
+  if (CAPI_URL && window.__sk03PageViewId) {
+    window.addEventListener('load', function () {
+      setTimeout(function () { sendCapi('PageView', window.__sk03PageViewId, {}); }, 300);
+    });
   }
 
   /* ---------- الإعدادات: موعد SPSS ---------- */
@@ -364,7 +431,7 @@
   form.addEventListener('focusin', function () {
     if (started) { return; }
     started = true;
-    track('FormStart', { content_name: FORM_LABEL }, true);
+    track('FormStart', { content_name: FORM_LABEL }, { custom: true });
   });
 
   /* --- الإرسال --- */
@@ -421,7 +488,10 @@
     var params = { content_name: courses, content_category: FORM_LABEL };
     var value = leadValue();
     if (value > 0) { params.value = value; params.currency = 'DZD'; }
-    track('Lead', params);
+    // بيانات المطابقة تُرسل إلى خادمنا فقط، ويشفّرها (SHA-256) قبل إرسالها إلى ميتا
+    track('Lead', params, {
+      userData: { full_name: name, ph: phoneVal, em: (fields.email.value || '').trim() }
+    });
 
     $('[data-success-name]', successBox).textContent = name.split(/\s+/)[0] || name;
     $('[data-success-phone]', successBox).textContent = phoneVal;
