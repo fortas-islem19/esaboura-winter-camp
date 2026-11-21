@@ -86,6 +86,14 @@ api/capi.js           دالة Vercel لإرسال الأحداث إلى Meta Co
 
 ## النشر على Vercel
 
+**المشروع منشأ ومنشور:** https://esaboura-winter-camp.vercel.app
+(مشروع `esaboura-winter-camp`، مع `META_ACCESS_TOKEN` مضبوط كمتغيّر Sensitive للإنتاج والمعاينة).
+
+> فرع الإنتاج في Vercel هو `main`: كل دفعة إلى `main` تُنشر على الرابط أعلاه،
+> وكل دفعة إلى فرع آخر تُنشئ رابط معاينة فقط.
+
+الخطوات أدناه للمرجع إن احتجت إعادة الإعداد من الصفر:
+
 1. في [vercel.com](https://vercel.com): **Add New ← Project** واستورد المستودع `esaboura-winter-camp`.
    اترك Framework Preset على **Other** دون أي أمر بناء.
 2. قبل الضغط على Deploy، افتح **Environment Variables** وأضف `META_ACCESS_TOKEN` بقيمة رمز الوصول.
@@ -99,7 +107,7 @@ api/capi.js           دالة Vercel لإرسال الأحداث إلى Meta Co
 بعد ذلك:
 
 1. أضف معلومات التواصل والأسعار في `assets/js/config.js`.
-2. في `index.html` استبدل قيمة `og:image` برابط كامل للصورة، مثال: `https://example.com/assets/img/og-image.jpg`، لتظهر المعاينة عند مشاركة الرابط على فيسبوك وواتساب.
+2. عند ربط نطاق خاص، استبدل `esaboura-winter-camp.vercel.app` به في `og:url` و`og:image` و`canonical` داخل `index.html`.
 3. لإضافة صور المؤطّرين: ضعها في `assets/img/trainers/` واتّبع التعليق في قسم «المؤطّرون» داخل `index.html`.
 
 ## المعاينة محليًا
