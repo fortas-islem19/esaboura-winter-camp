@@ -195,16 +195,76 @@
     if (a) { track('Contact', { content_name: FORM_LABEL }); }
   });
 
-  /* ---------- معلومات الدفع ---------- */
+  /* ---------- معلومات الدفع: CCP / بريدي موب / نقدًا ---------- */
   var PAY = CFG.payment || {};
-  if (hasValue(PAY.ccp) || hasValue(PAY.rib)) {
-    $$('[data-pay]').forEach(function (el) {
-      var v = PAY[el.getAttribute('data-pay')];
-      if (hasValue(v)) { el.textContent = String(v).trim(); } else { el.closest('div').hidden = true; }
+  var PAY_METHODS = [
+    { key: 'ccp', tab: 'الحساب البريدي', name: 'الحساب البريدي CCP', icon: 'i-mail', title: 'الدفع عبر الحساب البريدي الجاري (CCP)', ok: hasValue(PAY.ccp) },
+    { key: 'baridimob', tab: 'بريدي موب', name: 'بريدي موب (BaridiMob)', icon: 'i-phone', title: 'الدفع عبر تطبيق بريدي موب (BaridiMob)', ok: hasValue(PAY.rib) },
+    { key: 'cash', tab: 'نقدًا (كاش)', name: 'نقدًا (كاش)', icon: 'i-cash', title: 'الدفع نقدًا (كاش)', ok: true }
+  ].filter(function (m) { return m.ok; });
+
+  function esc(v) {
+    return String(v).replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
     });
-  } else {
-    $$('[data-pay-block], .pay-details').forEach(function (el) { el.hidden = true; });
   }
+  function iconSvg(id) { return '<svg class="i" aria-hidden="true"><use href="#' + id + '"/></svg>'; }
+  function payField(label, sub, value, copyKey) {
+    return '<div class="pay-field"><dt>' + label + (sub ? ' <small>' + sub + '</small>' : '') + '</dt><dd>' +
+      '<bdi dir="ltr">' + esc(String(value).trim()) + '</bdi>' +
+      (copyKey ? '<button type="button" class="copy" data-copy-from="' + copyKey + '" aria-label="نسخ ' + label + '">' + iconSvg('i-copy') + '<span>نسخ</span></button>' : '') +
+      '</dd></div>';
+  }
+  function paySteps(list) {
+    return '<ol class="pay-steps">' + list.map(function (t) { return '<li>' + t + '</li>'; }).join('') + '</ol>';
+  }
+  function payPanel(key) {
+    var holder = hasValue(PAY.holder) ? payField('الاسم', 'Nom', PAY.holder) : '';
+    if (key === 'ccp') {
+      return '<dl class="pay-fields">' + payField('رقم الحساب', 'Compte CCP', PAY.ccp, 'ccp') +
+        (hasValue(PAY.ccpKey) ? payField('المفتاح', 'Clé', PAY.ccpKey) : '') + holder + '</dl>' +
+        paySteps(['ادفع المبلغ في أي مكتب بريد إلى الحساب أعلاه.', 'صوّر الوصل بوضوح.', 'أرسل صورة الوصل عبر واتساب للتحقق وتأكيد مقعدك.']);
+    }
+    if (key === 'baridimob') {
+      return '<dl class="pay-fields">' + payField('RIB', '', PAY.rib, 'rib') + holder + '</dl>' +
+        paySteps(['حوّل المبلغ من تطبيق بريدي موب إلى الـ RIB أعلاه.', 'التقط صورة لوصل التحويل.', 'أرسل الصورة عبر واتساب للتحقق وتأكيد مقعدك.']);
+    }
+    var place = hasValue(PAY.cashPlace) ? String(PAY.cashPlace).trim() : 'مقر مدرسة السبورة — سطيف';
+    var map = hasValue(CONTACT.mapUrl) ? ' <a href="' + esc(CONTACT.mapUrl) + '" target="_blank" rel="noopener">الخريطة</a>' : '';
+    return '<dl class="pay-fields"><div class="pay-field"><dt>المكان</dt><dd><span>' + esc(place) + '</span>' + map + '</dd></div></dl>' +
+      paySteps(['راسلنا عبر واتساب لتحديد موعد الدفع.', 'ادفع المبلغ نقدًا في مقر المدرسة واستلم وصلك.', 'يُؤكَّد مقعدك فور الدفع.']);
+  }
+  function renderPayWidget(box, selected) {
+    if (!PAY_METHODS.length) { box.hidden = true; return null; }
+    if (box._payShow) { box._payShow(selected); return box._payShow; }
+    box.innerHTML =
+      '<div class="pay-tabs" role="tablist" aria-label="طريقة الدفع">' +
+      PAY_METHODS.map(function (m) {
+        return '<button type="button" role="tab" class="pay-tab" data-method="' + m.key + '" aria-selected="false">' + iconSvg(m.icon) + '<span>' + m.tab + '</span></button>';
+      }).join('') +
+      '</div><div class="pay-panel" role="tabpanel"></div>';
+    function show(key) {
+      var m = PAY_METHODS.filter(function (x) { return x.key === key; })[0] || PAY_METHODS[0];
+      $$('.pay-tab', box).forEach(function (t) { t.setAttribute('aria-selected', String(t.getAttribute('data-method') === m.key)); });
+      $('.pay-panel', box).innerHTML = '<p class="pay-title">' + iconSvg(m.icon) + m.title + '</p>' + payPanel(m.key);
+      if (typeof box._onMethod === 'function') { box._onMethod(m.key); }
+    }
+    box.addEventListener('click', function (e) {
+      var tab = e.target.closest('.pay-tab');
+      if (tab && box.contains(tab)) { show(tab.getAttribute('data-method')); }
+    });
+    box._payShow = show;
+    show(selected);
+    return show;
+  }
+  function payMethodName(key) {
+    var m = PAY_METHODS.filter(function (x) { return x.key === key; })[0];
+    return m ? m.name : key;
+  }
+  // صندوق «معلومات الدفع» في قسم التسجيل
+  $$('[data-pay-widget]').forEach(function (box) {
+    if (!box.hasAttribute('data-pay-success')) { renderPayWidget(box, 'ccp'); }
+  });
 
   function copyText(text) {
     if (navigator.clipboard && window.isSecureContext) { return navigator.clipboard.writeText(text); }
@@ -430,6 +490,10 @@
     status: $('#f-status', form)
   };
   var coursesField = $('.courses-field', form);
+  var payMethodField = $('.paymethod-field', form);
+  $$('input[name="payment_method"]', form).forEach(function (r) {
+    r.addEventListener('change', function () { clearError(payMethodField, $('#e-paymethod')); });
+  });
 
   /* --- بيانات الحملة (UTM) --- */
   (function captureUtm() {
@@ -541,6 +605,10 @@
       setError(coursesField, $('#e-courses'), 'اختر دورة واحدة على الأقل.');
       if (!firstInvalid) { firstInvalid = singles[0]; }
     }
+    if (payMethodField && !form.querySelector('input[name="payment_method"]:checked')) {
+      setError(payMethodField, $('#e-paymethod'), 'اختر طريقة الدفع.');
+      if (!firstInvalid) { firstInvalid = form.querySelector('input[name="payment_method"]'); }
+    }
     if (firstInvalid) {
       firstInvalid.focus({ preventScroll: true });
       var target = firstInvalid.closest('.field') || firstInvalid;
@@ -651,16 +719,31 @@
       amountRow.hidden = !(value > 0);
     }
 
+    var methodInput = form.querySelector('input[name="payment_method"]:checked');
+    var methodKey = methodInput ? methodInput.getAttribute('data-method') : 'ccp';
     var waBtn = $('[data-success-wa]', successBox);
-    if (wa && waBtn) {
+    var waLabel = waBtn ? $('[data-wa-label]', waBtn) : null;
+    function updateWa(key) {
+      if (!wa || !waBtn) { return; }
+      var cash = key === 'cash';
       waBtn.href = waLink(
-        'السلام عليكم، سجّلت في ' + FORM_LABEL + ' بمدرسة السبورة سطيف، وهذه صورة وصل الدفع.\n' +
+        'السلام عليكم، سجّلت في ' + FORM_LABEL + ' بمدرسة السبورة سطيف' +
+        (cash ? '، وأودّ تحديد موعد للدفع نقدًا.' : '، وهذه صورة وصل الدفع.') + '\n' +
         'الاسم: ' + name + '\n' +
         'الهاتف: ' + phoneVal + '\n' +
         'الدورات: ' + courses.split(' + ').join('، ') +
-        (value > 0 ? '\nالمبلغ: ' + formatPrice(value) : '')
+        (value > 0 ? '\nالمبلغ: ' + formatPrice(value) : '') + '\n' +
+        'طريقة الدفع: ' + payMethodName(key)
       );
+      if (waLabel) { waLabel.textContent = cash ? 'راسلنا عبر واتساب لتحديد موعد الدفع' : 'أرسل صورة الوصل عبر واتساب'; }
       waBtn.hidden = false;
+    }
+    var payBox = $('[data-pay-success]', successBox);
+    if (payBox) {
+      payBox._onMethod = updateWa;
+      renderPayWidget(payBox, methodKey);
+    } else {
+      updateWa(methodKey);
     }
 
     form.hidden = true;
