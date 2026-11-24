@@ -18,7 +18,7 @@ const crypto = require('crypto');
 const PIXEL_ID = (process.env.META_PIXEL_ID || '1084066284668146').trim();
 const API_VERSION = (process.env.META_API_VERSION || 'v24.0').trim();
 const ALLOWED_EVENTS = new Set(['PageView', 'ViewContent', 'FormStart', 'Purchase', 'Contact']);
-const ALLOWED_CONTENT_IDS = new Set(['writing', 'datascience', 'spss', 'all']);
+const ALLOWED_CONTENT_IDS = new Set(['writing', 'datascience', 'digital', 'all']);
 
 const sha256 = (value) => crypto.createHash('sha256').update(value, 'utf8').digest('hex');
 const text = (value, max = 300) => (typeof value === 'string' ? value.trim().slice(0, max) : '');

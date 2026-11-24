@@ -116,7 +116,7 @@
   // باقة المخيم كاملاً: السعر الأصلي (مجموع الدورات) ومقدار التوفير
   (function bundleSavings() {
     var bundle = priceNumber(PRICES.all || 0);
-    var sum = priceNumber(PRICES.writing || 0) + priceNumber(PRICES.datascience || 0) + priceNumber(PRICES.spss || 0);
+    var sum = priceNumber(PRICES.writing || 0) + priceNumber(PRICES.datascience || 0) + priceNumber(PRICES.digital || 0);
     if (!bundle || sum <= bundle) { return; }
     var was = $('[data-price-was]');
     var save = $('[data-price-save]');
@@ -517,7 +517,7 @@
     return singles.filter(function (b) { return b.checked; }).map(function (b) { return b.value; });
   }
   function selectedKeys() {
-    if (allBox && allBox.checked) { return ['writing', 'datascience', 'spss']; }
+    if (allBox && allBox.checked) { return ['writing', 'datascience', 'digital']; }
     return singles.filter(function (b) { return b.checked; }).map(function (b) { return b.getAttribute('data-course'); });
   }
   function syncCourses() {
