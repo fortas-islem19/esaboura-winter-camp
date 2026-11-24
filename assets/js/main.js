@@ -297,6 +297,28 @@
     }).catch(function () { /* المستخدم يستطيع النسخ يدويًا */ });
   });
 
+  /* ---------- آراء المشاركين ---------- */
+  $$('.rv-toggle').forEach(function (btn) {
+    var panel = document.getElementById(btn.getAttribute('aria-controls'));
+    if (!panel) { return; }
+    var label = $('span', btn);
+    panel.setAttribute('aria-hidden', 'true');
+    btn.addEventListener('click', function () {
+      var open = btn.getAttribute('aria-expanded') !== 'true';
+      btn.setAttribute('aria-expanded', String(open));
+      panel.classList.toggle('is-open', open);
+      panel.setAttribute('aria-hidden', String(!open));
+      if (label) { label.textContent = open ? 'إخفاء' : 'اقرأ التعليق كاملًا'; }
+    });
+  });
+  (function pauseReviewsOffscreen() {
+    var section = $('#reviews');
+    if (!section || !('IntersectionObserver' in window)) { return; }
+    new IntersectionObserver(function (entries) {
+      section.classList.toggle('is-paused', !entries[0].isIntersecting);
+    }).observe(section);
+  })();
+
   /* ---------- السنة في التذييل ---------- */
   $$('[data-year]').forEach(function (el) { el.textContent = String(new Date().getFullYear()); });
 
