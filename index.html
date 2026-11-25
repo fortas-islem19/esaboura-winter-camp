@@ -100,6 +100,7 @@
   <symbol id="i-chevron" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></symbol>
   <symbol id="i-cash" viewBox="0 0 24 24"><rect x="2.5" y="6" width="19" height="12" rx="2"/><circle cx="12" cy="12" r="2.6"/><path d="M6 9.5v5M18 9.5v5"/></symbol>
   <symbol id="i-copy" viewBox="0 0 24 24"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V5.5A1.5 1.5 0 0 0 14.5 4h-9A1.5 1.5 0 0 0 4 5.5v9A1.5 1.5 0 0 0 5.5 16H8"/></symbol>
+  <symbol id="i-person" viewBox="0 0 24 24"><circle cx="12" cy="8.6" r="4.4"/><path d="M3 23c.9-5.6 4.5-8.4 9-8.4s8.1 2.8 9 8.4z"/></symbol>
   <symbol id="i-lock" viewBox="0 0 24 24"><rect x="5" y="10.5" width="14" height="10" rx="2"/><path d="M8 10.5V8a4 4 0 0 1 8 0v2.5"/></symbol>
   <symbol id="i-layers" viewBox="0 0 24 24"><path d="M12 3l9 5-9 5-9-5 9-5z"/><path d="M3 13l9 5 9-5"/></symbol>
 </svg>
@@ -507,11 +508,10 @@
       <header class="section-head" data-reveal>
         <p class="eyebrow">آراء المشاركين</p>
         <h2 id="reviews-title">قالوا عن تجربتهم مع السبورة</h2>
-        <p>كلمات مشاركين في دوراتنا، كما كتبوها في تعليقاتهم على صفحتنا في فيسبوك.</p>
+        <p>كلمات مشاركين في دوراتنا، كما كتبوها في تعليقاتهم على فيسبوك.</p>
       </header>
 
       <div class="rv-grid">
-        <div class="rv-col">
           <figure class="rv-card" data-reveal style="--d: 0s; --rv-g: var(--brand-gradient)">
             <span class="rv-quote" aria-hidden="true">”</span>
             <blockquote class="rv-text">
@@ -534,34 +534,77 @@
             </figcaption>
           </figure>
 
-          <figure class="rv-card rv-card-ltr" data-reveal style="--d: .18s; --rv-g: linear-gradient(135deg, #19b3a3, #0f6f66)">
-            <span class="rv-quote" aria-hidden="true">”</span>
-            <blockquote class="rv-text" lang="fr" dir="ltr">
-              <p>Merci beaucoup, c'était une expérience unique, un excellent apprentissage avec <mark class="rv-hl">des formateurs compétents et très patients</mark>.</p>
-              <p>Je vous souhaite une bonne continuation et du succès. Et on attend toujours d'autres formations inchallah.</p>
-            </blockquote>
-            <figcaption class="rv-author">
-              <span class="rv-avatar" aria-hidden="true">SI</span>
-              <span class="rv-who"><strong dir="ltr">Saida Iddir</strong><small>تعليق على فيسبوك</small></span>
-              <span class="rv-src" title="تعليق على فيسبوك"><svg class="i" aria-hidden="true"><use href="#i-facebook"/></svg></span>
-            </figcaption>
-          </figure>
-        </div>
-
-        <div class="rv-col">
-          <figure class="rv-card" data-reveal style="--d: .09s; --rv-g: linear-gradient(135deg, #e5457f, #a81f52)">
+          <figure class="rv-card" data-reveal style="--d: .12s; --rv-g: linear-gradient(135deg, #e5457f, #a81f52)">
             <span class="rv-quote" aria-hidden="true">”</span>
             <blockquote class="rv-text">
               <p>كانت دورة في القمة، وكانت غنية جدًا بالمعلومات واكتشاف عدة تطبيقات نجهل استعمالها. كانت <mark class="rv-hl">طريقة تقديم الدورة ممتازة وبسيطة</mark>، تجربة رائعة مع دورة الأستاذ الرقمي.</p>
-              <p>أشكر الأساتذة المؤطّرين هذه الدورة. معلومات ثرية، وطريقة بسيطة يستفيد منها كل المستويات. أنا أتحدث عن نفسي: كنت أعجز على إنشاء أي صورة، لكن في هذه الدورة استفدت الكثير.</p>
-              <p>أنصح كل أستاذ أو إنسان شغوف في اكتشاف الذكاء الاصطناعي أن يسجّل في منصة السبورة، فهي منصة في القمة، والأستاذة في قمة العطاء، خبرة عالية وتواضع.</p>
+              <div class="rv-more" id="rv-more-hadda">
+                <div>
+                  <p>أشكر الأساتذة المؤطّرين هذه الدورة. معلومات ثرية، وطريقة بسيطة يستفيد منها كل المستويات. أنا أتحدث عن نفسي: كنت أعجز على إنشاء أي صورة، لكن في هذه الدورة استفدت الكثير.</p>
+                  <p>أنصح كل أستاذ أو إنسان شغوف في اكتشاف الذكاء الاصطناعي أن يسجّل في منصة السبورة، فهي منصة في القمة، والأستاذة في قمة العطاء، خبرة عالية وتواضع.</p>
+                </div>
+              </div>
             </blockquote>
+            <button type="button" class="rv-toggle" aria-expanded="false" aria-controls="rv-more-hadda"><span>اقرأ التعليق كاملًا</span><svg class="i" aria-hidden="true"><use href="#i-chevron"/></svg></button>
             <figcaption class="rv-author">
               <span class="rv-avatar" aria-hidden="true">HR</span>
               <span class="rv-who"><strong dir="ltr">Hadda Rahal</strong><small>مشاركة في دورة «الأستاذ الرقمي»</small></span>
               <span class="rv-src" title="تعليق على فيسبوك"><svg class="i" aria-hidden="true"><use href="#i-facebook"/></svg></span>
             </figcaption>
           </figure>
+
+          <figure class="rv-card" data-reveal style="--d: .24s; --rv-g: linear-gradient(135deg, #f0a030, #95560c)">
+            <span class="rv-quote" aria-hidden="true">”</span>
+            <blockquote class="rv-text">
+              <p>كانت دورة <mark class="rv-hl">رائعة ومميزة بكل المقاييس</mark>. سعدت كثيرًا بالمشاركة والاستفادة من هذه التجربة الثرية.</p>
+              <p>كل الشكر والتقدير للأستاذ عبد الفتاح تباني على ما قدّمه من علم وخبرة وتوجيهات قيّمة. تجربة جميلة أضافت لي الكثير، وبإذن الله تكون بداية لمزيد من التعلم والتطور والنجاح.</p>
+            </blockquote>
+            <figcaption class="rv-author">
+              <span class="rv-avatar rv-avatar-icon" aria-hidden="true"><svg class="i"><use href="#i-person"/></svg></span>
+              <span class="rv-who"><strong>المدربة رقية</strong><small>مشاركة في دورة البروفيسور عبد الفتاح تباني</small></span>
+              <span class="rv-src" title="تعليق على فيسبوك"><svg class="i" aria-hidden="true"><use href="#i-facebook"/></svg></span>
+            </figcaption>
+          </figure>
+      </div>
+
+      <div class="rv-marquee" data-reveal>
+        <div class="rv-track">
+          <div class="rv-set">
+            <figure class="rv-chip">
+              <blockquote class="rv-chip-text"><p>بصحة المشاركين مسبقًا أستاذ، ما شاء الله. الدورة الماضية كانت بالنسبة لي <mark class="rv-hl">نقلة نوعية في مساري البحثي</mark>. بالتوفيق للجميع.</p></blockquote>
+              <figcaption class="rv-author"><span class="rv-avatar" style="--rv-g: linear-gradient(135deg, #19b3a3, #0f6f66)" aria-hidden="true">MG</span><span class="rv-who"><strong dir="ltr">Miyada Gouizi</strong><small>مشاركة في دورة سابقة</small></span><span class="rv-src" title="تعليق على فيسبوك"><svg class="i" aria-hidden="true"><use href="#i-facebook"/></svg></span></figcaption>
+            </figure>
+            <figure class="rv-chip">
+              <blockquote class="rv-chip-text"><p>بالتوفيق، ماش رايحين يندمو عليها. درتها الأسبوع الماضي أونلاين واستفدت كثيرًا، فعندما تكون حضورية أجزم أنها ستكون مفيدة أكثر. <mark class="rv-hl">شرح مبسّط والأستاذ ذو كفاءة عالية</mark>.</p></blockquote>
+              <figcaption class="rv-author"><span class="rv-avatar" style="--rv-g: linear-gradient(135deg, #a435f3, #730db8)" aria-hidden="true">AK</span><span class="rv-who"><strong dir="ltr">Amira Bel Epse Kabahoum</strong><small>شاركت في نسخة سابقة عن بُعد</small></span><span class="rv-src" title="تعليق على فيسبوك"><svg class="i" aria-hidden="true"><use href="#i-facebook"/></svg></span></figcaption>
+            </figure>
+            <figure class="rv-chip">
+              <blockquote class="rv-chip-text" lang="fr" dir="ltr"><p>Merci beaucoup, c'était une expérience unique, un excellent apprentissage avec <mark class="rv-hl">des formateurs compétents et très patients</mark>.</p></blockquote>
+              <figcaption class="rv-author"><span class="rv-avatar" style="--rv-g: linear-gradient(135deg, #19b3a3, #0f6f66)" aria-hidden="true">SI</span><span class="rv-who"><strong dir="ltr">Saida Iddir</strong><small>تعليق على فيسبوك</small></span><span class="rv-src" title="تعليق على فيسبوك"><svg class="i" aria-hidden="true"><use href="#i-facebook"/></svg></span></figcaption>
+            </figure>
+            <figure class="rv-chip">
+              <blockquote class="rv-chip-text"><p>كانت الدورة <mark class="rv-hl">مميزة، تعلّمت منها الكثير</mark>. شكرًا على كل جهودكم. بالتوفيق.</p></blockquote>
+              <figcaption class="rv-author"><span class="rv-avatar" style="--rv-g: linear-gradient(135deg, #e5457f, #a81f52)" aria-hidden="true">ES</span><span class="rv-who"><strong dir="ltr">Eco Set</strong><small>تعليق على فيسبوك</small></span><span class="rv-src" title="تعليق على فيسبوك"><svg class="i" aria-hidden="true"><use href="#i-facebook"/></svg></span></figcaption>
+            </figure>
+          </div>
+          <div class="rv-set rv-set-clone" aria-hidden="true">
+            <figure class="rv-chip">
+              <blockquote class="rv-chip-text"><p>بصحة المشاركين مسبقًا أستاذ، ما شاء الله. الدورة الماضية كانت بالنسبة لي <mark class="rv-hl">نقلة نوعية في مساري البحثي</mark>. بالتوفيق للجميع.</p></blockquote>
+              <figcaption class="rv-author"><span class="rv-avatar" style="--rv-g: linear-gradient(135deg, #19b3a3, #0f6f66)" aria-hidden="true">MG</span><span class="rv-who"><strong dir="ltr">Miyada Gouizi</strong><small>مشاركة في دورة سابقة</small></span><span class="rv-src" title="تعليق على فيسبوك"><svg class="i" aria-hidden="true"><use href="#i-facebook"/></svg></span></figcaption>
+            </figure>
+            <figure class="rv-chip">
+              <blockquote class="rv-chip-text"><p>بالتوفيق، ماش رايحين يندمو عليها. درتها الأسبوع الماضي أونلاين واستفدت كثيرًا، فعندما تكون حضورية أجزم أنها ستكون مفيدة أكثر. <mark class="rv-hl">شرح مبسّط والأستاذ ذو كفاءة عالية</mark>.</p></blockquote>
+              <figcaption class="rv-author"><span class="rv-avatar" style="--rv-g: linear-gradient(135deg, #a435f3, #730db8)" aria-hidden="true">AK</span><span class="rv-who"><strong dir="ltr">Amira Bel Epse Kabahoum</strong><small>شاركت في نسخة سابقة عن بُعد</small></span><span class="rv-src" title="تعليق على فيسبوك"><svg class="i" aria-hidden="true"><use href="#i-facebook"/></svg></span></figcaption>
+            </figure>
+            <figure class="rv-chip">
+              <blockquote class="rv-chip-text" lang="fr" dir="ltr"><p>Merci beaucoup, c'était une expérience unique, un excellent apprentissage avec <mark class="rv-hl">des formateurs compétents et très patients</mark>.</p></blockquote>
+              <figcaption class="rv-author"><span class="rv-avatar" style="--rv-g: linear-gradient(135deg, #19b3a3, #0f6f66)" aria-hidden="true">SI</span><span class="rv-who"><strong dir="ltr">Saida Iddir</strong><small>تعليق على فيسبوك</small></span><span class="rv-src" title="تعليق على فيسبوك"><svg class="i" aria-hidden="true"><use href="#i-facebook"/></svg></span></figcaption>
+            </figure>
+            <figure class="rv-chip">
+              <blockquote class="rv-chip-text"><p>كانت الدورة <mark class="rv-hl">مميزة، تعلّمت منها الكثير</mark>. شكرًا على كل جهودكم. بالتوفيق.</p></blockquote>
+              <figcaption class="rv-author"><span class="rv-avatar" style="--rv-g: linear-gradient(135deg, #e5457f, #a81f52)" aria-hidden="true">ES</span><span class="rv-who"><strong dir="ltr">Eco Set</strong><small>تعليق على فيسبوك</small></span><span class="rv-src" title="تعليق على فيسبوك"><svg class="i" aria-hidden="true"><use href="#i-facebook"/></svg></span></figcaption>
+            </figure>
+          </div>
         </div>
       </div>
 
